@@ -1,33 +1,15 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
-import { products } from '@/data/products';
+import { useStore } from '@/store/useStore';
 import { Trash2, ShieldCheck, ShoppingBag } from 'lucide-react';
 import Image from 'next/image';
 import { formatINR } from '@/lib/utils';
 
 export default function CartPage() {
-  // Mock cart state with two items
-  const [cartItems, setCartItems] = useState([
-    { product: products[0], quantity: 1 },
-    { product: products[10], quantity: 2 },
-  ]);
-
-  const updateQuantity = (index: number, newQty: number) => {
-    if (newQty < 1) return;
-    const newItems = [...cartItems];
-    newItems[index].quantity = newQty;
-    setCartItems(newItems);
-  };
-
-  const removeItem = (index: number) => {
-    const newItems = [...cartItems];
-    newItems.splice(index, 1);
-    setCartItems(newItems);
-  };
+  const { cart: cartItems, updateQuantity, removeFromCart } = useStore();
 
   const subtotal = cartItems.reduce((acc, item) => acc + (item.product.discountPrice || item.product.price) * item.quantity, 0);
   const tax = subtotal * 0.08; // 8% tax
@@ -58,7 +40,7 @@ export default function CartPage() {
               
               {/* Cart Items List */}
               <div className="flex-1 space-y-6">
-                {cartItems.map((item, index) => (
+                {cartItems.map((item) => (
                   <div key={item.product.id} className="flex flex-col sm:flex-row gap-6 p-6 bg-brand-card rounded-2xl border border-brand-border/50">
                     <div className="w-full sm:w-32 h-32 bg-white rounded-xl p-3 flex-shrink-0 flex items-center justify-center border border-brand-border relative">
                       <Image src={item.product.image} alt={item.product.name} fill className="object-contain mix-blend-multiply" />
@@ -70,16 +52,16 @@ export default function CartPage() {
                           <h3 className="font-semibold text-lg">{item.product.name}</h3>
                           <p className="text-sm text-brand-text-secondary">{item.product.brand} • {item.product.category}</p>
                         </div>
-                        <button onClick={() => removeItem(index)} className="p-2 text-brand-text-secondary hover:text-red-500 transition-colors">
+                        <button onClick={() => removeFromCart(item.product.id)} className="p-2 text-brand-text-secondary hover:text-red-500 transition-colors">
                           <Trash2 className="w-5 h-5" />
                         </button>
                       </div>
                       
                       <div className="flex justify-between items-end mt-4">
                         <div className="flex items-center border border-brand-border rounded-lg bg-white p-1">
-                          <button onClick={() => updateQuantity(index, item.quantity - 1)} className="w-8 h-8 flex items-center justify-center hover:bg-brand-section rounded-md">-</button>
+                          <button onClick={() => updateQuantity(item.product.id, item.quantity - 1)} className="w-8 h-8 flex items-center justify-center hover:bg-brand-section rounded-md">-</button>
                           <span className="w-10 text-center font-medium text-sm">{item.quantity}</span>
-                          <button onClick={() => updateQuantity(index, item.quantity + 1)} className="w-8 h-8 flex items-center justify-center hover:bg-brand-section rounded-md">+</button>
+                          <button onClick={() => updateQuantity(item.product.id, item.quantity + 1)} className="w-8 h-8 flex items-center justify-center hover:bg-brand-section rounded-md">+</button>
                         </div>
                         <div className="text-right">
                           <span className="text-lg font-bold">

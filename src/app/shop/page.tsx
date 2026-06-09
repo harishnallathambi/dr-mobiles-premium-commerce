@@ -11,12 +11,18 @@ import { SlidersHorizontal, ChevronDown, Grid, List as ListIcon } from 'lucide-r
 
 export default function ShopPage() {
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<'All' | 'iPhone' | 'Android' | 'iPad' | 'Accessories'>('All');
+  const [activeTab, setActiveTab] = useState<'All' | 'iPhone' | 'Android' | 'iPad' | 'Accessory'>('All');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [sortBy, setSortBy] = useState('featured');
 
-  const filteredProducts = products.filter(p => {
+  const filteredProducts = [...products].filter(p => {
     if (activeTab === 'All') return true;
     return p.category === activeTab;
+  }).sort((a, b) => {
+    if (sortBy === 'price-low') return (a.discountPrice || a.price) - (b.discountPrice || b.price);
+    if (sortBy === 'price-high') return (b.discountPrice || b.price) - (a.discountPrice || a.price);
+    if (sortBy === 'rating') return b.rating - a.rating;
+    return 0; // featured/default
   });
 
   return (
@@ -35,7 +41,7 @@ export default function ShopPage() {
                 {['All', 'iPhone', 'Android', 'iPad', 'Accessories'].map((tab) => (
                   <button
                     key={tab}
-                    onClick={() => setActiveTab(tab as 'All' | 'iPhone' | 'Android' | 'iPad' | 'Accessories')}
+                    onClick={() => setActiveTab(tab as 'All' | 'iPhone' | 'Android' | 'iPad' | 'Accessory')}
                     className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors relative top-[17px] whitespace-nowrap ${
                       activeTab === tab 
                         ? 'border-brand-accent text-brand-text-primary' 
@@ -72,12 +78,15 @@ export default function ShopPage() {
                 </div>
 
                 <div className="relative">
-                  <select className="appearance-none bg-white border border-brand-border rounded-full py-2 pl-4 pr-10 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-brand-accent">
-                    <option>Sort by: Featured</option>
-                    <option>Price: Low to High</option>
-                    <option>Price: High to Low</option>
-                    <option>Highest Rated</option>
-                    <option>Newest Arrivals</option>
+                  <select 
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value)}
+                    className="appearance-none bg-white border border-brand-border rounded-full py-2 pl-4 pr-10 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-brand-accent"
+                  >
+                    <option value="featured">Sort by: Featured</option>
+                    <option value="price-low">Price: Low to High</option>
+                    <option value="price-high">Price: High to Low</option>
+                    <option value="rating">Highest Rated</option>
                   </select>
                   <ChevronDown className="absolute right-3 top-2.5 w-4 h-4 text-brand-text-secondary pointer-events-none" />
                 </div>

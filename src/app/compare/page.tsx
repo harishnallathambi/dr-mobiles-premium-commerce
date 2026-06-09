@@ -3,16 +3,14 @@
 
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
-import { products } from '@/data/products';
+import { useStore } from '@/store/useStore';
 import { Scale, X, ShoppingBag, Plus } from 'lucide-react';
+import Link from 'next/link';
 import Image from 'next/image';
 import { formatINR } from '@/lib/utils';
 
 export default function ComparePage() {
-  const compareItems = [
-    products[0], // iPhone 15 Pro Max
-    products[5], // Galaxy S24 Ultra
-  ];
+  const { compare: compareItems, removeFromCompare, clearCompare, addToCart } = useStore();
 
   const specRows = [
     { label: 'Brand', key: 'brand' },
@@ -43,10 +41,25 @@ export default function ComparePage() {
               <Scale className="w-8 h-8 text-brand-accent" />
               <h1 className="text-3xl font-bold tracking-tight">Compare Products</h1>
             </div>
-            <button className="text-sm font-medium text-brand-text-secondary hover:text-brand-text-primary">
-              Clear All
-            </button>
+            {compareItems.length > 0 && (
+              <button onClick={clearCompare} className="text-sm font-medium text-brand-text-secondary hover:text-brand-text-primary">
+                Clear All
+              </button>
+            )}
           </div>
+
+          {compareItems.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-20 bg-brand-section rounded-3xl border border-brand-border">
+              <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center mb-6">
+                <Scale className="w-10 h-10 text-brand-text-secondary" />
+              </div>
+              <h2 className="text-2xl font-semibold mb-2">Nothing to compare</h2>
+              <p className="text-brand-text-secondary mb-8">Add up to 4 products to compare their features side-by-side.</p>
+              <Link href="/shop" className="px-8 py-4 bg-brand-text-primary text-white rounded-xl font-medium hover:bg-brand-accent transition-colors">
+                Browse Products
+              </Link>
+            </div>
+          ) : (
 
           <div className="overflow-x-auto pb-8 hide-scrollbar">
             <div className="min-w-[800px]">
@@ -60,7 +73,10 @@ export default function ComparePage() {
                 
                 {compareItems.map((product) => (
                   <div key={product.id} className="col-span-1 relative bg-brand-card p-6 rounded-3xl border border-brand-border flex flex-col items-center text-center group">
-                    <button className="absolute top-4 right-4 p-2 rounded-full bg-brand-section/50 text-brand-text-secondary hover:text-red-500 hover:bg-white transition-all z-10">
+                    <button 
+                      onClick={() => removeFromCompare(product.id)}
+                      className="absolute top-4 right-4 p-2 rounded-full bg-brand-section/50 text-brand-text-secondary hover:text-red-500 hover:bg-white transition-all z-10"
+                    >
                       <X className="w-4 h-4" />
                     </button>
                     
@@ -71,7 +87,10 @@ export default function ComparePage() {
                     <h3 className="font-semibold text-lg mb-2 line-clamp-2">{product.name}</h3>
                     <p className="text-xl font-bold mb-4">{formatINR(product.price)}</p>
                     
-                    <button className="w-full mt-auto bg-brand-text-primary text-white py-3 rounded-xl font-medium hover:bg-brand-accent transition-colors flex items-center justify-center gap-2">
+                    <button 
+                      onClick={() => addToCart({ product, quantity: 1 })}
+                      className="w-full mt-auto bg-brand-text-primary text-white py-3 rounded-xl font-medium hover:bg-brand-accent transition-colors flex items-center justify-center gap-2"
+                    >
                       <ShoppingBag className="w-4 h-4" /> Add to Cart
                     </button>
                   </div>
@@ -79,9 +98,9 @@ export default function ComparePage() {
 
                 {compareItems.length < 3 && (
                   <div className="col-span-1 bg-brand-section rounded-3xl border border-brand-border border-dashed flex flex-col items-center justify-center min-h-[300px]">
-                    <button className="w-16 h-16 bg-white rounded-full flex items-center justify-center text-brand-text-secondary hover:text-brand-accent hover:shadow-md transition-all mb-4">
+                    <Link href="/shop" className="w-16 h-16 bg-white rounded-full flex items-center justify-center text-brand-text-secondary hover:text-brand-accent hover:shadow-md transition-all mb-4">
                       <Plus className="w-8 h-8" />
-                    </button>
+                    </Link>
                     <span className="font-medium text-brand-text-secondary">Add Product</span>
                   </div>
                 )}
@@ -106,11 +125,11 @@ export default function ComparePage() {
                     })}
                     {compareItems.length < 3 && <div className="col-span-1"></div>}
                   </div>
-                ))}
+                  ))}
+                </div>
               </div>
-
             </div>
-          </div>
+          )}
           
         </div>
       </main>

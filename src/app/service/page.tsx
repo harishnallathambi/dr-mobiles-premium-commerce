@@ -8,6 +8,12 @@ import { Smartphone, Battery, Camera, Droplets, MapPin, Calendar, Clock, Wrench,
 export default function ServicePage() {
   const [selectedService, setSelectedService] = useState('');
   const [deliveryType, setDeliveryType] = useState('store');
+  const [isSuccess, setIsSuccess] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSuccess(true);
+  };
 
   const services = [
     { id: 'display', title: 'Display Repair', icon: Smartphone, desc: 'Screen replacement & glass repair' },
@@ -30,7 +36,21 @@ export default function ServicePage() {
             </p>
           </div>
 
-          <form className="space-y-10">
+          {isSuccess ? (
+            <div className="bg-brand-card rounded-3xl p-10 border border-brand-border text-center max-w-2xl mx-auto">
+              <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Wrench className="w-10 h-10" />
+              </div>
+              <h2 className="text-2xl font-bold mb-4">Booking Confirmed!</h2>
+              <p className="text-brand-text-secondary mb-8">
+                Your service appointment has been successfully scheduled. We have sent a confirmation email and SMS with your reference number.
+              </p>
+              <button onClick={() => setIsSuccess(false)} className="px-8 py-4 bg-brand-text-primary text-white rounded-xl font-medium hover:bg-brand-accent transition-colors">
+                Book Another Service
+              </button>
+            </div>
+          ) : (
+          <form onSubmit={handleSubmit} className="space-y-10">
             {/* Step 1: Select Service */}
             <section>
               <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
@@ -158,7 +178,7 @@ export default function ServicePage() {
             </section>
 
             <div className="pt-6 border-t border-brand-border">
-              <button type="button" className="w-full flex items-center justify-center gap-2 bg-brand-text-primary text-white py-4 rounded-xl font-medium hover:bg-brand-accent transition-colors">
+              <button type="submit" className="w-full flex items-center justify-center gap-2 bg-brand-text-primary text-white py-4 rounded-xl font-medium hover:bg-brand-accent transition-colors">
                 <Wrench className="w-5 h-5" /> Book Service Appointment
               </button>
               <p className="text-center text-xs text-brand-text-secondary mt-4">
@@ -167,6 +187,7 @@ export default function ServicePage() {
             </div>
 
           </form>
+          )}
           
         </div>
       </main>

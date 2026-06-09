@@ -5,21 +5,68 @@ import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import ProductCard from '@/components/product/ProductCard';
 import { products } from '@/data/products';
-import { Heart, Scale, Shield, Truck, RotateCcw, Star, PlayCircle, Box, Check } from 'lucide-react';
+import { Heart, Scale, Shield, Truck, RotateCcw, Star, Check } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { use } from 'react';
 import { formatINR } from '@/lib/utils';
+import { useStore } from '@/store/useStore';
+import { useRouter } from 'next/navigation';
+import ProductGallery from '@/components/product/ProductGallery';
 
 // Using a mock params for Next.js 15 app router compatibility in client components
 export default function ProductDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = use(params);
-  const product = products.find(p => p.id === resolvedParams.slug) || products[0];
+  const product = products.find(p => p.id === resolvedParams.slug);
   
+  const { addToCart, toggleWishlist, isInWishlist, toggleCompare } = useStore();
+  const router = useRouter();
+
+  // If product not found, render 404 state
+  if (!product) {
+    return (
+      <div className="min-h-screen flex flex-col bg-brand-bg">
+        <Navbar />
+        <main className="flex-1 flex flex-col items-center justify-center py-20 px-4">
+          <div className="bg-white p-12 rounded-3xl border border-brand-border text-center max-w-md w-full shadow-sm">
+            <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Shield className="w-10 h-10 text-gray-400" />
+            </div>
+            <h1 className="text-2xl font-bold mb-4">Product Not Found</h1>
+            <p className="text-brand-text-secondary mb-8">
+              We couldn&apos;t find the product you&apos;re looking for. It might have been removed or the URL is incorrect.
+            </p>
+            <button 
+              onClick={() => router.push('/shop')}
+              className="w-full py-3 bg-brand-accent text-white rounded-full font-medium hover:bg-blue-600 transition-colors"
+            >
+              Continue Shopping
+            </button>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  // Define state unconditionally now that we know product exists
   const [selectedColor, setSelectedColor] = useState(product.colors?.[0] || '');
   const [selectedStorage, setSelectedStorage] = useState(product.storageOptions?.[0] || '');
   const [quantity, setQuantity] = useState(1);
-  const [activeMedia, setActiveMedia] = useState('image'); // image, video, 360
+  const [justAdded, setJustAdded] = useState(false);
+  
+  const inWishlist = isInWishlist(product.id);
+
+  const handleAddToCart = () => {
+    addToCart({ product, quantity, color: typeof selectedColor === 'string' ? selectedColor : selectedColor?.name, storage: selectedStorage });
+    setJustAdded(true);
+    setTimeout(() => setJustAdded(false), 2000);
+  };
+
+  const handleBuyNow = () => {
+    addToCart({ product, quantity, color: typeof selectedColor === 'string' ? selectedColor : selectedColor?.name, storage: selectedStorage });
+    router.push('/checkout');
+  };
 
   const relatedProducts = products.filter(p => p.category === product.category && p.id !== product.id).slice(0, 4);
   const boughtTogether = products.filter(p => p.category === 'Accessory').slice(0, 3);
@@ -35,51 +82,14 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
           <nav className="text-sm text-brand-text-secondary mb-8">
             <Link href="/" className="hover:text-brand-text-primary">Home</Link> &rsaquo; 
             <Link href="/shop" className="hover:text-brand-text-primary mx-2">Shop</Link> &rsaquo; 
-            <Link href={`/category/${product.category.toLowerCase()}`} className="hover:text-brand-text-primary mx-2">{product.category}</Link> &rsaquo; 
+            <Link href={`/${product.category.toLowerCase()}`} className="hover:text-brand-text-primary mx-2">{product.category}</Link> &rsaquo; 
             <span className="text-brand-text-primary mx-2">{product.name}</span>
           </nav>
 
           <div className="flex flex-col lg:flex-row gap-12 mb-20">
             {/* Left: Gallery */}
             <div className="w-full lg:w-1/2 flex flex-col gap-4">
-              <div className="relative aspect-square bg-brand-section rounded-3xl overflow-hidden flex items-center justify-center border border-brand-border p-8">
-                {activeMedia === 'image' && (
-                  <Image src={product.image} alt={product.name} fill className="object-contain mix-blend-multiply p-8" />
-                )}
-                {activeMedia === 'video' && (
-                  <div className="flex flex-col items-center justify-center text-brand-text-secondary">
-                    <PlayCircle className="w-16 h-16 mb-4 opacity-50" />
-                    <p>Product Video Placeholder</p>
-                  </div>
-                )}
-                {activeMedia === '360' && (
-                  <div className="flex flex-col items-center justify-center text-brand-text-secondary">
-                    <Box className="w-16 h-16 mb-4 opacity-50" />
-                    <p>Interactive 360° View Placeholder</p>
-                  </div>
-                )}
-              </div>
-              
-              <div className="flex gap-4 overflow-x-auto hide-scrollbar">
-                <button 
-                  onClick={() => setActiveMedia('image')}
-                  className={`w-20 h-20 rounded-xl bg-brand-section border-2 flex items-center justify-center p-2 flex-shrink-0 ${activeMedia === 'image' ? 'border-brand-accent' : 'border-transparent'}`}
-                >
-                  <Image src={product.image} alt="Thumbnail" fill className="object-contain mix-blend-multiply p-1" />
-                </button>
-                <button 
-                  onClick={() => setActiveMedia('video')}
-                  className={`w-20 h-20 rounded-xl bg-brand-section border-2 flex items-center justify-center text-brand-text-secondary flex-shrink-0 ${activeMedia === 'video' ? 'border-brand-accent text-brand-accent' : 'border-transparent'}`}
-                >
-                  <PlayCircle className="w-6 h-6" />
-                </button>
-                <button 
-                  onClick={() => setActiveMedia('360')}
-                  className={`w-20 h-20 rounded-xl bg-brand-section border-2 flex items-center justify-center text-brand-text-secondary flex-shrink-0 ${activeMedia === '360' ? 'border-brand-accent text-brand-accent' : 'border-transparent'}`}
-                >
-                  <Box className="w-6 h-6" />
-                </button>
-              </div>
+              <ProductGallery images={product.images || [product.image]} productName={product.name} />
             </div>
 
             {/* Right: Details */}
@@ -115,15 +125,19 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                 <div className="mb-6">
                   <h3 className="text-sm font-semibold mb-3">Color</h3>
                   <div className="flex gap-3">
-                    {product.colors.map(color => (
-                      <button
-                        key={color}
-                        onClick={() => setSelectedColor(color)}
-                        className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all ${selectedColor === color ? 'border-brand-accent scale-110' : 'border-brand-border'}`}
-                      >
-                        <span className="w-8 h-8 rounded-full border border-black/10" style={{ backgroundColor: color }} />
-                      </button>
-                    ))}
+                    {product.colors.map((color: { name?: string, hex?: string } | string) => {
+                      const colorObj = typeof color === 'string' ? { name: color, hex: color } : { name: color.name || '', hex: color.hex || '' };
+                      return (
+                        <button
+                          key={colorObj.name || colorObj.hex}
+                          onClick={() => setSelectedColor(colorObj)}
+                          className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all ${selectedColor === color ? 'border-brand-accent scale-110' : 'border-brand-border'}`}
+                          title={colorObj.name || colorObj.hex}
+                        >
+                          <span className="w-8 h-8 rounded-full border border-black/10" style={{ backgroundColor: colorObj.hex }} />
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               )}
@@ -158,19 +172,33 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                   <button onClick={() => setQuantity(quantity + 1)} className="w-10 h-10 flex items-center justify-center hover:bg-brand-section rounded-lg">+</button>
                 </div>
                 
-                <button className="flex-1 bg-brand-text-primary text-white py-4 rounded-xl font-medium hover:bg-brand-accent transition-colors">
-                  Add to Cart
+                <button 
+                  onClick={handleAddToCart}
+                  disabled={!product.inStock}
+                  className={`flex-1 text-white py-4 rounded-xl font-medium transition-colors ${justAdded ? 'bg-green-500' : 'bg-brand-text-primary hover:bg-brand-accent'} ${!product.inStock ? 'opacity-50 cursor-not-allowed' : ''}`}
+                >
+                  {justAdded ? 'Added to Cart ✓' : 'Add to Cart'}
                 </button>
-                <button className="flex-1 bg-white border border-brand-border text-brand-text-primary py-4 rounded-xl font-medium hover:bg-brand-section transition-colors">
+                <button 
+                  onClick={handleBuyNow}
+                  disabled={!product.inStock}
+                  className="flex-1 bg-white border border-brand-border text-brand-text-primary py-4 rounded-xl font-medium hover:bg-brand-section transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
                   Buy Now
                 </button>
               </div>
 
               <div className="flex items-center gap-6 mb-8 border-b border-brand-border pb-8">
-                <button className="flex items-center gap-2 text-sm font-medium text-brand-text-secondary hover:text-brand-text-primary transition-colors">
-                  <Heart className="w-4 h-4" /> Add to Wishlist
+                <button 
+                  onClick={() => toggleWishlist(product)}
+                  className={`flex items-center gap-2 text-sm font-medium transition-colors ${inWishlist ? 'text-red-500' : 'text-brand-text-secondary hover:text-brand-text-primary'}`}
+                >
+                  <Heart className={`w-4 h-4 ${inWishlist ? 'fill-current' : ''}`} /> Add to Wishlist
                 </button>
-                <button className="flex items-center gap-2 text-sm font-medium text-brand-text-secondary hover:text-brand-text-primary transition-colors">
+                <button 
+                  onClick={() => toggleCompare(product)}
+                  className="flex items-center gap-2 text-sm font-medium text-brand-text-secondary hover:text-brand-text-primary transition-colors"
+                >
                   <Scale className="w-4 h-4" /> Compare
                 </button>
               </div>
@@ -257,7 +285,14 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                 <div className="w-full lg:w-64 bg-white p-6 rounded-2xl shadow-sm text-center">
                   <p className="text-sm text-brand-text-secondary mb-1">Total Price:</p>
                   <p className="text-3xl font-bold mb-6">{formatINR(product.price + boughtTogether.reduce((a,b)=>a+b.price, 0))}</p>
-                  <button className="w-full bg-brand-text-primary text-white py-3 rounded-xl font-medium hover:bg-brand-accent transition-colors text-sm">
+                  <button 
+                    onClick={() => {
+                      addToCart({ product, quantity: 1 });
+                      boughtTogether.forEach(acc => addToCart({ product: acc, quantity: 1 }));
+                      router.push('/cart');
+                    }}
+                    className="w-full bg-brand-text-primary text-white py-3 rounded-xl font-medium hover:bg-brand-accent transition-colors text-sm"
+                  >
                     Add All to Cart
                   </button>
                 </div>

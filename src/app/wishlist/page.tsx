@@ -1,22 +1,20 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
-import { products } from '@/data/products';
+import { useStore } from '@/store/useStore';
+import { Product } from '@/data/products';
 import { Heart, Trash2, ShoppingBag, ArrowDown } from 'lucide-react';
 import Image from 'next/image';
 import { formatINR } from '@/lib/utils';
 
 export default function WishlistPage() {
-  const [wishlistItems, setWishlistItems] = useState([
-    products[2], // iPhone 15
-    products[5], // Galaxy S24 Ultra
-  ]);
+  const { wishlist: wishlistItems, removeFromWishlist, addToCart } = useStore();
 
-  const removeItem = (id: string) => {
-    setWishlistItems(wishlistItems.filter(item => item.id !== id));
+  const handleMoveToCart = (product: Product) => {
+    addToCart({ product, quantity: 1 });
+    removeFromWishlist(product.id);
   };
 
   return (
@@ -51,7 +49,7 @@ export default function WishlistPage() {
                 <div key={product.id} className="flex flex-col bg-brand-card rounded-2xl overflow-hidden border border-brand-border/50 group">
                   <div className="relative aspect-square p-6 bg-brand-bg flex items-center justify-center">
                     <button 
-                      onClick={() => removeItem(product.id)}
+                      onClick={() => removeFromWishlist(product.id)}
                       className="absolute top-4 right-4 p-2 rounded-full bg-brand-section/50 text-brand-text-secondary hover:text-red-500 hover:bg-white transition-all z-10"
                     >
                       <Trash2 className="w-5 h-5" />
@@ -94,6 +92,7 @@ export default function WishlistPage() {
                       
                       <button 
                         disabled={!product.inStock}
+                        onClick={() => handleMoveToCart(product)}
                         className={`flex items-center justify-center px-4 py-2 rounded-xl font-medium transition-colors ${
                           product.inStock 
                             ? 'bg-brand-text-primary text-white hover:bg-brand-accent' 

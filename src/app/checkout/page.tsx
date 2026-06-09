@@ -4,20 +4,26 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
-import { products } from '@/data/products';
 import { CreditCard, Wallet, Banknote, ShieldCheck, CheckCircle2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { formatINR } from '@/lib/utils';
+import { useStore } from '@/store/useStore';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function CheckoutPage() {
+  const router = useRouter();
   const [selectedPayment, setSelectedPayment] = useState('card');
   const [isSuccess, setIsSuccess] = useState(false);
 
-  // Mock cart
-  const cartItems = [
-    { product: products[0], quantity: 1 },
-  ];
+  const { cart: cartItems, clearCart } = useStore();
+  
+  useEffect(() => {
+    if (cartItems.length === 0 && !isSuccess) {
+      router.push('/cart');
+    }
+  }, [cartItems.length, isSuccess, router]);
   
   const subtotal = cartItems.reduce((acc, item) => acc + (item.product.discountPrice || item.product.price) * item.quantity, 0);
   const tax = subtotal * 0.08;
@@ -26,6 +32,9 @@ export default function CheckoutPage() {
   const handlePlaceOrder = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSuccess(true);
+    setTimeout(() => {
+      clearCart();
+    }, 100);
   };
 
   if (isSuccess) {
@@ -173,7 +182,7 @@ export default function CheckoutPage() {
                   {cartItems.map((item) => (
                     <div key={item.product.id} className="flex gap-4">
                       <div className="w-16 h-16 bg-white rounded-lg border border-brand-border flex items-center justify-center p-2 flex-shrink-0">
-                         <Image src={item.product.image} alt={item.product.name} fill className="object-contain mix-blend-multiply p-2" />
+                       <Image src={item.product.image} alt={item.product.name} fill className="object-contain mix-blend-multiply p-2" />
                       </div>
                       <div className="flex-1 flex flex-col justify-center">
                         <p className="text-sm font-semibold leading-tight line-clamp-1">{item.product.name}</p>

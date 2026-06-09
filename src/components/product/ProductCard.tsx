@@ -1,20 +1,42 @@
+'use client';
+
 import Link from 'next/link';
 import Image from 'next/image';
-import { Heart, ShoppingBag } from 'lucide-react';
+import { Heart, ShoppingBag, Check } from 'lucide-react';
 import { formatINR } from '@/lib/utils';
 import type { Product } from '@/data/products';
+import { useStore } from '@/store/useStore';
+import { useState } from 'react';
 
 interface ProductCardProps {
   product: Product;
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
+  const { toggleWishlist, isInWishlist, addToCart } = useStore();
+  const [justAdded, setJustAdded] = useState(false);
+  const inWishlist = isInWishlist(product.id);
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    addToCart({ product, quantity: 1 });
+    setJustAdded(true);
+    setTimeout(() => setJustAdded(false), 2000);
+  };
+
   return (
     <div className="group flex flex-col bg-brand-card rounded-2xl overflow-hidden hover:shadow-sm transition-all duration-300 border border-brand-border/50">
       <div className="relative aspect-square p-6 bg-brand-bg flex items-center justify-center">
         {/* Wishlist Button */}
-        <button className="absolute top-4 right-4 p-2 rounded-full bg-brand-section/50 text-brand-text-secondary hover:text-brand-accent hover:bg-white transition-all z-10">
-          <Heart className="w-5 h-5" />
+        <button 
+          onClick={(e) => { e.preventDefault(); toggleWishlist(product); }}
+          className={`absolute top-4 right-4 p-2 rounded-full transition-all z-10 ${
+            inWishlist 
+              ? 'bg-red-50 text-red-500' 
+              : 'bg-brand-section/50 text-brand-text-secondary hover:text-brand-accent hover:bg-white'
+          }`}
+        >
+          <Heart className={`w-5 h-5 ${inWishlist ? 'fill-current' : ''}`} />
         </button>
 
         {/* Product Image Placeholder (Using standard Next Image with unoptimized for dummy data) */}
@@ -60,8 +82,18 @@ export default function ProductCard({ product }: ProductCardProps) {
             )}
           </div>
           
-          <button className="flex items-center justify-center w-10 h-10 rounded-full bg-brand-text-primary text-white hover:bg-brand-accent transition-colors">
-            <ShoppingBag className="w-5 h-5" />
+          <button 
+            onClick={handleAddToCart}
+            disabled={!product.inStock}
+            className={`flex items-center justify-center w-10 h-10 rounded-full transition-colors ${
+              justAdded 
+                ? 'bg-green-500 text-white' 
+                : product.inStock 
+                  ? 'bg-brand-text-primary text-white hover:bg-brand-accent'
+                  : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+            }`}
+          >
+            {justAdded ? <Check className="w-5 h-5" /> : <ShoppingBag className="w-5 h-5" />}
           </button>
         </div>
       </div>

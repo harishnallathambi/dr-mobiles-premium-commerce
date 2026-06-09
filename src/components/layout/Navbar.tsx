@@ -5,17 +5,21 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Search, ShoppingBag, Heart, User, Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useStore } from '@/store/useStore';
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [logoError, setLogoError] = useState(false);
+  
+  const cartItemsCount = useStore((state) => state.cart.reduce((acc, item) => acc + item.quantity, 0));
+  const wishlistItemsCount = useStore((state) => state.wishlist.length);
 
   const navLinks = [
-    { name: 'iPhone', href: '/category/iphone' },
-    { name: 'Android', href: '/category/android' },
-    { name: 'Accessories', href: '/category/accessories' },
-    { name: 'Watches', href: '/category/watches' },
-    { name: 'Audio', href: '/category/audio' },
+    { name: 'iPhone', href: '/iphone' },
+    { name: 'Android', href: '/android' },
+    { name: 'Accessories', href: '/accessories' },
+    { name: 'Watches', href: '/watches' },
+    { name: 'Audio', href: '/audio' },
     { name: 'Service', href: '/service' },
     { name: 'Founder', href: '/founder' },
     { name: 'Offers', href: '/offers' },
@@ -71,14 +75,21 @@ export default function Navbar() {
             <button className="hover:text-brand-accent transition-colors">
               <Search className="w-5 h-5" />
             </button>
-            <Link href="/wishlist" className="hover:text-brand-accent transition-colors">
+            <Link href="/wishlist" className="relative hover:text-brand-accent transition-colors">
               <Heart className="w-5 h-5" />
+              {wishlistItemsCount > 0 && (
+                <span className="absolute -top-1.5 -right-2 bg-brand-accent text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                  {wishlistItemsCount}
+                </span>
+              )}
             </Link>
             <Link href="/cart" className="relative hover:text-brand-accent transition-colors">
               <ShoppingBag className="w-5 h-5" />
-              <span className="absolute -top-1.5 -right-2 bg-brand-accent text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
-                2
-              </span>
+              {cartItemsCount > 0 && (
+                <span className="absolute -top-1.5 -right-2 bg-brand-accent text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                  {cartItemsCount}
+                </span>
+              )}
             </Link>
             <Link href="/account" className="hover:text-brand-accent transition-colors">
               <User className="w-5 h-5" />
@@ -89,9 +100,11 @@ export default function Navbar() {
           <div className="flex md:hidden items-center space-x-4">
             <Link href="/cart" className="relative text-brand-text-primary">
               <ShoppingBag className="w-5 h-5" />
-              <span className="absolute -top-1.5 -right-2 bg-brand-accent text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
-                2
-              </span>
+              {cartItemsCount > 0 && (
+                <span className="absolute -top-1.5 -right-2 bg-brand-accent text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                  {cartItemsCount}
+                </span>
+              )}
             </Link>
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
