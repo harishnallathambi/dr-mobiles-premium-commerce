@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-bg: #FFFFFF;
+  --color-brand-section: #F5F5F7;
+  --color-brand-card: #FBFBFD;
+  --color-brand-text-primary: #1D1D1F;
+  --color-brand-text-secondary: #6E6E73;
+  --color-brand-accent: #0071E3;
+  --color-brand-accent-hover: #E8F2FF;
+  --color-brand-border: rgba(0, 0, 0, 0.08);
+  --color-brand-dark: #000000;
+  
+  --font-sans: var(--font-inter), "Inter", "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+@layer base {
+  *, ::before, ::after {
+    border-color: var(--color-brand-border);
+  }
+}
+
+@layer utilities {
+  .glass-effect {
+    @apply bg-white/70 backdrop-blur-md border-b border-brand-border;
+  }
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 20px);
+  }
+}
+
+/* Make all Lucide icons thinner globally for Apple-style aesthetics */
+svg.lucide {
+  stroke-width: 1.5px !important;
+}
