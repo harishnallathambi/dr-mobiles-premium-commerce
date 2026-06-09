@@ -6,6 +6,7 @@ import Footer from '@/components/layout/Footer';
 import { products } from '@/data/products';
 import { Scale, X, ShoppingBag, Plus } from 'lucide-react';
 import Image from 'next/image';
+import { formatINR } from '@/lib/utils';
 
 export default function ComparePage() {
   const compareItems = [
@@ -16,7 +17,7 @@ export default function ComparePage() {
   const specRows = [
     { label: 'Brand', key: 'brand' },
     { label: 'Category', key: 'category' },
-    { label: 'Price', key: 'price', format: (v: number) => `$${v.toFixed(2)}` },
+    { label: 'Price', key: 'price', format: (v: number) => formatINR(v) },
     { label: 'Display', key: 'specs.display' },
     { label: 'Processor', key: 'specs.processor' },
     { label: 'Camera', key: 'specs.camera' },
@@ -68,7 +69,7 @@ export default function ComparePage() {
                     </div>
                     
                     <h3 className="font-semibold text-lg mb-2 line-clamp-2">{product.name}</h3>
-                    <p className="text-xl font-bold mb-4">${product.price.toFixed(2)}</p>
+                    <p className="text-xl font-bold mb-4">{formatINR(product.price)}</p>
                     
                     <button className="w-full mt-auto bg-brand-text-primary text-white py-3 rounded-xl font-medium hover:bg-brand-accent transition-colors flex items-center justify-center gap-2">
                       <ShoppingBag className="w-4 h-4" /> Add to Cart

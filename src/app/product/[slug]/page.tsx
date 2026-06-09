@@ -9,6 +9,7 @@ import { Heart, Scale, Shield, Truck, RotateCcw, Star, PlayCircle, Box, Check } 
 import Link from 'next/link';
 import Image from 'next/image';
 import { use } from 'react';
+import { formatINR } from '@/lib/utils';
 
 // Using a mock params for Next.js 15 app router compatibility in client components
 export default function ProductDetailPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -101,11 +102,11 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
               <div className="flex items-end gap-4 mb-8">
                 {product.discountPrice ? (
                   <>
-                    <span className="text-4xl font-bold tracking-tight">${product.discountPrice.toFixed(2)}</span>
-                    <span className="text-xl text-brand-text-secondary line-through mb-1">${product.price.toFixed(2)}</span>
+                    <span className="text-4xl font-bold tracking-tight">{formatINR(product.discountPrice)}</span>
+                    <span className="text-xl text-brand-text-secondary line-through mb-1">{formatINR(product.price)}</span>
                   </>
                 ) : (
-                  <span className="text-4xl font-bold tracking-tight">${product.price.toFixed(2)}</span>
+                  <span className="text-4xl font-bold tracking-tight">{formatINR(product.price)}</span>
                 )}
               </div>
 
@@ -255,7 +256,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
 
                 <div className="w-full lg:w-64 bg-white p-6 rounded-2xl shadow-sm text-center">
                   <p className="text-sm text-brand-text-secondary mb-1">Total Price:</p>
-                  <p className="text-3xl font-bold mb-6">${(product.price + boughtTogether.reduce((a,b)=>a+b.price, 0)).toFixed(2)}</p>
+                  <p className="text-3xl font-bold mb-6">{formatINR(product.price + boughtTogether.reduce((a,b)=>a+b.price, 0))}</p>
                   <button className="w-full bg-brand-text-primary text-white py-3 rounded-xl font-medium hover:bg-brand-accent transition-colors text-sm">
                     Add All to Cart
                   </button>

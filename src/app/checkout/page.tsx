@@ -8,6 +8,7 @@ import { products } from '@/data/products';
 import { CreditCard, Wallet, Banknote, ShieldCheck, CheckCircle2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
+import { formatINR } from '@/lib/utils';
 
 export default function CheckoutPage() {
   const [selectedPayment, setSelectedPayment] = useState('card');
@@ -109,7 +110,7 @@ export default function CheckoutPage() {
                           <p className="text-sm text-brand-text-secondary">Arrives Tomorrow</p>
                         </div>
                       </div>
-                      <span className="font-semibold">$15.00</span>
+                      <span className="font-semibold">₹1500</span>
                     </label>
                   </div>
                 </section>
@@ -179,7 +180,7 @@ export default function CheckoutPage() {
                         <p className="text-xs text-brand-text-secondary mt-1">Qty: {item.quantity}</p>
                       </div>
                       <div className="font-medium text-sm flex items-center">
-                        ${((item.product.discountPrice || item.product.price) * item.quantity).toFixed(2)}
+                        {formatINR((item.product.discountPrice || item.product.price) * item.quantity)}
                       </div>
                     </div>
                   ))}
@@ -188,7 +189,7 @@ export default function CheckoutPage() {
                 <div className="space-y-4 text-sm mb-6 pb-6 border-b border-brand-border">
                   <div className="flex justify-between">
                     <span className="text-brand-text-secondary">Subtotal</span>
-                    <span className="font-medium">${subtotal.toFixed(2)}</span>
+                    <span className="font-medium">{formatINR(subtotal)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-brand-text-secondary">Delivery</span>
@@ -196,13 +197,13 @@ export default function CheckoutPage() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-brand-text-secondary">Tax (8%)</span>
-                    <span className="font-medium">${tax.toFixed(2)}</span>
+                    <span className="font-medium">{formatINR(tax)}</span>
                   </div>
                 </div>
                 
                 <div className="flex justify-between items-end mb-8">
                   <span className="font-bold text-lg">Total</span>
-                  <span className="font-bold text-3xl">${total.toFixed(2)}</span>
+                  <span className="font-bold text-3xl">{formatINR(total)}</span>
                 </div>
                 
                 <button 

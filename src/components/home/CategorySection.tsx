@@ -2,11 +2,11 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 const categories = [
-  { name: 'iPhone', image: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?q=80&w=400&auto=format&fit=crop', href: '/category/iphone' },
-  { name: 'Android Phones', image: 'https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?q=80&w=400&auto=format&fit=crop', href: '/category/android' },
-  { name: 'Smart Watches', image: 'https://images.unsplash.com/photo-1579586337278-3befd40fd17a?q=80&w=400&auto=format&fit=crop', href: '/category/watches' },
-  { name: 'Audio Gear', image: 'https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?q=80&w=400&auto=format&fit=crop', href: '/category/audio' },
-  { name: 'Chargers & Cables', image: 'https://images.unsplash.com/photo-1615526675159-e248c3021d3f?q=80&w=400&auto=format&fit=crop', href: '/category/chargers' },
+  { name: 'iPhone', image: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?q=80&w=400&auto=format&fit=crop', href: '/shop' },
+  { name: 'Android Phones', image: 'https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?q=80&w=400&auto=format&fit=crop', href: '/shop' },
+  { name: 'iPad & Tablets', image: 'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?q=80&w=400&auto=format&fit=crop', href: '/shop' },
+  { name: 'Smart Watches', image: 'https://images.unsplash.com/photo-1579586337278-3befd40fd17a?q=80&w=400&auto=format&fit=crop', href: '/shop' },
+  { name: 'Accessories', image: 'https://images.unsplash.com/photo-1615526675159-e248c3021d3f?q=80&w=400&auto=format&fit=crop', href: '/shop' },
   { name: 'Service & Repair', image: 'https://images.unsplash.com/photo-1597740985671-2a8a3b80502e?q=80&w=400&auto=format&fit=crop', href: '/service' },
 ];
 

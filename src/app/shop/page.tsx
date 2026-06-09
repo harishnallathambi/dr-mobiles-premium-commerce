@@ -11,11 +11,11 @@ import { SlidersHorizontal, ChevronDown, Grid, List as ListIcon } from 'lucide-r
 
 export default function ShopPage() {
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<'All' | 'iPhone' | 'Android'>('All');
+  const [activeTab, setActiveTab] = useState<'All' | 'iPhone' | 'Android' | 'iPad' | 'Accessories'>('All');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
   const filteredProducts = products.filter(p => {
-    if (activeTab === 'All') return p.category === 'iPhone' || p.category === 'Android';
+    if (activeTab === 'All') return true;
     return p.category === activeTab;
   });
 
@@ -28,15 +28,15 @@ export default function ShopPage() {
           
           {/* Header & Tabs */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold tracking-tight mb-6">Shop Smartphones</h1>
+            <h1 className="text-3xl font-bold tracking-tight mb-6">Shop Premium Devices</h1>
             
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-brand-border pb-4">
-              <div className="flex space-x-6">
-                {['All', 'iPhone', 'Android'].map((tab) => (
+              <div className="flex space-x-6 overflow-x-auto hide-scrollbar">
+                {['All', 'iPhone', 'Android', 'iPad', 'Accessories'].map((tab) => (
                   <button
                     key={tab}
-                    onClick={() => setActiveTab(tab as 'All' | 'iPhone' | 'Android')}
-                    className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors relative top-[17px] ${
+                    onClick={() => setActiveTab(tab as 'All' | 'iPhone' | 'Android' | 'iPad' | 'Accessories')}
+                    className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors relative top-[17px] whitespace-nowrap ${
                       activeTab === tab 
                         ? 'border-brand-accent text-brand-text-primary' 
                         : 'border-transparent text-brand-text-secondary hover:text-brand-text-primary'

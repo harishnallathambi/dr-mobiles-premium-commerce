@@ -7,6 +7,7 @@ import Footer from '@/components/layout/Footer';
 import { products } from '@/data/products';
 import { Heart, Trash2, ShoppingBag, ArrowDown } from 'lucide-react';
 import Image from 'next/image';
+import { formatINR } from '@/lib/utils';
 
 export default function WishlistPage() {
   const [wishlistItems, setWishlistItems] = useState([
@@ -83,11 +84,11 @@ export default function WishlistPage() {
                       <div>
                         {product.discountPrice ? (
                           <div className="flex flex-col">
-                            <span className="text-lg font-bold">${product.discountPrice.toFixed(2)}</span>
-                            <span className="text-sm text-brand-text-secondary line-through">${product.price.toFixed(2)}</span>
+                            <span className="text-lg font-bold">{formatINR(product.discountPrice)}</span>
+                            <span className="text-sm text-brand-text-secondary line-through">{formatINR(product.price)}</span>
                           </div>
                         ) : (
-                          <span className="text-lg font-bold">${product.price.toFixed(2)}</span>
+                          <span className="text-lg font-bold">{formatINR(product.price)}</span>
                         )}
                       </div>
                       

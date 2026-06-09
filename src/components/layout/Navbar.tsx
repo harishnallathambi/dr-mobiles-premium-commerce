@@ -2,11 +2,13 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Search, ShoppingBag, Heart, User, Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [logoError, setLogoError] = useState(false);
 
   const navLinks = [
     { name: 'iPhone', href: '/category/iphone' },
@@ -15,6 +17,7 @@ export default function Navbar() {
     { name: 'Watches', href: '/category/watches' },
     { name: 'Audio', href: '/category/audio' },
     { name: 'Service', href: '/service' },
+    { name: 'Founder', href: '/founder' },
     { name: 'Offers', href: '/offers' },
   ];
 
@@ -24,8 +27,29 @@ export default function Navbar() {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
-            <Link href="/" className="text-xl font-bold tracking-tight">
-              DR MOBILES
+            <Link href="/" className="flex items-center">
+              {logoError ? (
+                <span className="text-xl font-bold tracking-tight">DR MOBILES</span>
+              ) : (
+                <>
+                  <Image 
+                    src="/images/dr-mobiles-logo.png" 
+                    alt="DR MOBILES" 
+                    width={140} 
+                    height={40} 
+                    className="hidden md:block w-[140px] h-auto object-contain"
+                    onError={() => setLogoError(true)}
+                  />
+                  <Image 
+                    src="/images/dr-mobiles-logo.png" 
+                    alt="DR MOBILES" 
+                    width={110} 
+                    height={32} 
+                    className="md:hidden w-[110px] h-auto object-contain"
+                    onError={() => setLogoError(true)}
+                  />
+                </>
+              )}
             </Link>
           </div>
 

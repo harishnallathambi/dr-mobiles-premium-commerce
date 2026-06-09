@@ -7,6 +7,7 @@ import Footer from '@/components/layout/Footer';
 import { products } from '@/data/products';
 import { Trash2, ShieldCheck, ShoppingBag } from 'lucide-react';
 import Image from 'next/image';
+import { formatINR } from '@/lib/utils';
 
 export default function CartPage() {
   // Mock cart state with two items
@@ -82,7 +83,7 @@ export default function CartPage() {
                         </div>
                         <div className="text-right">
                           <span className="text-lg font-bold">
-                            ${((item.product.discountPrice || item.product.price) * item.quantity).toFixed(2)}
+                            {formatINR((item.product.discountPrice || item.product.price) * item.quantity)}
                           </span>
                         </div>
                       </div>
@@ -99,7 +100,7 @@ export default function CartPage() {
                   <div className="space-y-4 text-sm mb-6 pb-6 border-b border-brand-border">
                     <div className="flex justify-between">
                       <span className="text-brand-text-secondary">Subtotal ({cartItems.reduce((acc, i) => acc + i.quantity, 0)} items)</span>
-                      <span className="font-medium">${subtotal.toFixed(2)}</span>
+                      <span className="font-medium">{formatINR(subtotal)}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-brand-text-secondary">Estimated Delivery</span>
@@ -107,13 +108,13 @@ export default function CartPage() {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-brand-text-secondary">Estimated Tax (8%)</span>
-                      <span className="font-medium">${tax.toFixed(2)}</span>
+                      <span className="font-medium">{formatINR(tax)}</span>
                     </div>
                   </div>
                   
                   <div className="flex justify-between items-end mb-8">
                     <span className="font-bold text-lg">Total</span>
-                    <span className="font-bold text-3xl">${total.toFixed(2)}</span>
+                    <span className="font-bold text-3xl">{formatINR(total)}</span>
                   </div>
 
                   {/* Coupon */}

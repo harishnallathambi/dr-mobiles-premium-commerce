@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Heart, ShoppingBag } from 'lucide-react';
+import { formatINR } from '@/lib/utils';
 import type { Product } from '@/data/products';
 
 interface ProductCardProps {
@@ -51,11 +52,11 @@ export default function ProductCard({ product }: ProductCardProps) {
           <div>
             {product.discountPrice ? (
               <div className="flex flex-col">
-                <span className="text-lg font-bold">${product.discountPrice.toFixed(2)}</span>
-                <span className="text-sm text-brand-text-secondary line-through">${product.price.toFixed(2)}</span>
+                <span className="text-lg font-bold">{formatINR(product.discountPrice)}</span>
+                <span className="text-sm text-brand-text-secondary line-through">{formatINR(product.price)}</span>
               </div>
             ) : (
-              <span className="text-lg font-bold">${product.price.toFixed(2)}</span>
+              <span className="text-lg font-bold">{formatINR(product.price)}</span>
             )}
           </div>
           
